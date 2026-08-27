@@ -1,18 +1,34 @@
 function AddTaskForm({ newTask, onInputChange, onCreateTask}) {
     return (
-        <div>
-            <input 
+
+           <form
+            className="flex gap-4"
+            onSubmit = {onCreateTask}
+           >
+            <input
+                className="flex-1 p-3 border rounded-lg text-lg font-medium text-slate-800"
                 type = "text"
-                placehoder = "Enter Task title"
+                placeholder = "Enter Task title"
                 value = {newTask}
-                onChange={(e)=> onInputChange(e.target.value)} 
+                onChange={(e)=> onInputChange(e.target.value)}
             />
-            
-            
-            <button onClick = {onCreateTask} >
+
+
+            <button  type ="submit"
+            className="
+            bg-blue-600
+            text-white
+            px-6
+            py-3
+            rounded-lg
+            hover:bg-blue-700
+            transition
+            cursor-pointer
+            ">
                 Add Task
             </button>
-        </div>
+         </form>
+
     )
 }
 
