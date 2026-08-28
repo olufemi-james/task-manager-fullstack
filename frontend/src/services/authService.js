@@ -10,21 +10,23 @@ const login = async (userData) => {
 const register = async (userData) => {
   const response = await axios.post(`${API_URL}/register`, userData);
   return response.data;
-}
+};
 
 const forgotPassword = async (email) => {
-  const response = await axios.post(`${API_URL}/forgot-password`,
-    {email}
-   );
+  const response = await axios.post(
+    `${API_URL}/forgot-password`,
+    { email }
+  );
   return response.data;
 };
 
-const resetPassword = async(token, password) => {
-  const response = await axios.post(`${API_URL}/reset-password/${token}`,
-  {password}
-    );
-  return response.data
-}
+const resetPassword = async (token, password) => {
+  const response = await axios.post(
+    `${API_URL}/reset-password/${token}`,
+    { password }
+  );
+  return response.data;
+};
 
 const authService = {
   login,
