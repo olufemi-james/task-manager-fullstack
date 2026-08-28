@@ -20,19 +20,30 @@ function Dashboard() {
     const { user, logout } = useAuth();
 
     const fetchTasks = async () => {
-      setIsLoading(true)
-        setError(null);
-
+      setIsLoading(true);
+      setError(null);
+    
       try {
-       const data = await taskService.getTasks();
-
-        setTasks(data);
+        const data = await taskService.getTasks();
+    
+        console.log("Tasks API response:", data);
+        console.log("Is array:", Array.isArray(data));
+    
+        if (Array.isArray(data)) {
+          setTasks(data);
+        } else {
+          console.error("Expected an array of tasks but received:", data);
+          setTasks([]);
+          setError(new Error("Invalid task data received from server"));
+        }
       } catch (error) {
+        console.error("Failed to fetch tasks:", error);
         setError(error);
       } finally {
-          setIsLoading(false)
+        setIsLoading(false);
       }
     };
+
     const navigate = useNavigate();
 
     const handleInactivityLogout = useCallback(() => {
@@ -63,7 +74,7 @@ function Dashboard() {
             const createdTask = await taskService.createTask({
                 title: newTask,
             });
-            setTasks([...tasks, createdTask]);
+            setTasks((currentTasks) => [...currentTasks, createdTask]);
             setNewTask("");
 
             toast.success("Task created!");
@@ -78,11 +89,11 @@ function Dashboard() {
               completed: !task.completed,
             });
 
-            setTasks(
-              tasks.map((t) =>
+            setTasks((currentTasks) =>
+               currentTasks.map((t) =>
                 t._id === task._id ? updatedTask : t
-              )
-            );
+            )
+);
           } catch (error) {
             console.log(error);
           }
@@ -95,12 +106,11 @@ function Dashboard() {
               title: editedTitle,
             });
 
-            setTasks(
-              tasks.map((task) =>
-                task._id === taskId ? updatedTask : task
-              )
-            );
-
+            setTasks((currentTasks) =>
+              currentTasks.map((task) =>
+               task._id === taskId ? updatedTask : task
+            )
+          );
             toast.success("Task updated!");
 
           } catch (error) {
@@ -112,7 +122,9 @@ function Dashboard() {
           try {
             await taskService.deleteTask(taskId);
 
-            setTasks(tasks.filter((task) => task._id !== taskId));
+            setTasks((currentTasks) =>
+             currentTasks.filter((task) => task._id !== taskId)
+          );
 
             toast.success("Task deleted!");
 
