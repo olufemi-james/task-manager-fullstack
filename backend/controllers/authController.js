@@ -122,8 +122,7 @@ const forgotPassword = async (req, res) => {
         // Find user
         const user = await Auth.findOne({ email });
         console.log("Email received:", email);
-        console.log("User found:", user);
-
+        
         // Prevent email enumeration
         if (!user) {
             return res.status(200).json({
@@ -153,7 +152,7 @@ const forgotPassword = async (req, res) => {
         // Create reset URL
         const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
 
-        console.log("Reset URL:", resetUrl);
+        
 
         // Email template
         const message = `
