@@ -1,22 +1,41 @@
-const nodemailer = require("nodemailer");
+
 
 const sendEmail = async (options) => {
-    const transporter = nodemailer.createTransport({
-        host: process.env.EMAIL_HOST,
-        port: Number(process.env.EMAIL_PORT),
-        secure: false,
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-        }
+    const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+        method: "POST",
+        headers: {
+            accept: "application/json",
+            "api-key": process.env.BREVO_API_KEY,
+            "content-type": "application/json"
+        },
+        body: JSON.stringify({
+            sender: {
+                name: "Task Manager",
+                email: process.env.EMAIL_FROM
+            },
+            to: [
+                {
+                    email: options.email
+                }
+            ],
+            subject: options.subject,
+            htmlContent: options.message
+        })
     });
 
-    await transporter.sendMail({
-        from: `"Task Manager" <${process.env.EMAIL_FROM}>`,
-        to: options.email,
-        subject: options.subject,
-        html: options.message
-    });
+    if (!response.ok) {
+        const error = await response.text();
+
+        console.error("Brevo API Error:", error);
+
+        throw new Error(`Brevo email failed: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    console.log("Brevo email sent:", data.messageId);
+
+    return data;
 };
 
 module.exports = sendEmail;
